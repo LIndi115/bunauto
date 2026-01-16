@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dent HK | Klinika Dentare Moderne</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-main: #f2c1c6; /* Nga logoja */
+            --pink-dark: #e5a8af; /* Pak më e theksuar */
+            --text-color: #333333;
+            --light-gray: #f9f9f9;
+            --white: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.7;
+            background-color: var(--white);
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+
+        /* Utility classes */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .text-center { text-align: center; }
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in.appear { opacity: 1; transform: translateY(0); }
+
+
+        /* HEADER & NAVIGATION */
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            color: var(--pink-dark);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+        .logo i { font-size: 30px; color: var(--pink-main); } /* Ikona më e madhe */
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            margin-left: 35px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+        }
+        nav a::after { /* Underline effect */
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--pink-dark);
+            left: 0;
+            bottom: -5px;
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after { width: 100%; }
+        nav a:hover { color: var(--pink-dark); }
+
+
+        /* HERO SECTION */
+        .hero {
+            height: 95vh; /* Pak më e shkurtër */
+            background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), 
+                        url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-top: 100px; /* Offset for fixed header */
+        }
+        .hero-content { animation: fadeInScale 1.5s ease-out forwards; }
+        .hero small {
+            font-weight: 700;
+            color: var(--pink-dark);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem; /* Më e madhe */
+            color: var(--text-color);
+            margin-bottom: 25px;
+            line-height: 1.1;
+            max-width: 800px;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 700px;
+            margin-bottom: 40px;
+            color: #555;
+        }
+        .btn-termin {
+            background-color: var(--pink-dark);
+            color: white;
+            padding: 16px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 8px 20px rgba(229, 168, 175, 0.4);
+            letter-spacing: 0.8px;
+        }
+        .btn-termin:hover {
+            background-color: #ce2a3c; /* Pak më e thellë */
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(229, 168, 175, 0.6);
+        }
+
+        /* SECTION STYLES */
+        section { padding: 100px 0; }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .section-title::after { /* Small underline */
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--pink-main);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #777;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        /* SERVICES SECTION */
+        .services { background-color: var(--light-gray); }
+        .grid-services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .service-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            transition: all 0.4s ease-out;
+            border: 1px solid var(--border-color);
+        }
+        .service-card:hover { transform: translateY(-12px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .service-card i {
+            font-size: 50px;
+            color: var(--pink-main);
+            margin-bottom: 25px;
+            display: block;
+        }
+        .service-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--pink-dark);
+            margin-bottom: 15px;
+        }
+        .service-card p { font-size: 1rem; color: #666; }
+
+        /* ABOUT SECTION */
+        .about-us {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 50px;
+            margin-top: 50px;
+        }
+        .about-image { flex: 1; min-width: 350px; }
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 15px 15px 0 var(--pink-main), -15px -15px 0 var(--pink-dark);
+            filter: grayscale(10%);
+            transition: all 0.5s ease-out;
+        }
+        .about-image img:hover { filter: grayscale(0%); transform: scale(1.02); }
+        .about-content { flex: 1.5; min-width: 350px; }
+        .about-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--pink-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .about-content p { margin-bottom: 20px; color: #555; }
+        .about-content ul { list-style: none; margin-left: 0; padding-left: 0; }
+        .about-content ul li {
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 500;
+        }
+        .about-content ul li i {
+            color: var(--pink-main);
+            margin-right: 10px;
+        }
+
+
+        /* CONTACT SECTION */
+        .contact { background-color: var(--light-gray); }
+        .contact-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .contact-info {
+            flex: 1;
+            min-width: 300px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+        .info-item {
+            display: flex;
+            align-items: flex-start; /* Align icon to top */
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+        .info-item i { 
+            width: 50px; height: 50px; background: var(--pink-main); 
+            color: white; display: flex; align-items: center; 
+            justify-content: center; border-radius: 50%; 
+            font-size: 20px; flex-shrink: 0; /* Prevents icon from shrinking */
+        }
+        .info-item div strong { display: block; margin-bottom: 5px; color: var(--pink-dark); font-size: 1.1rem; }
+        .info-item div a { text-decoration: none; color: #555; transition: 0.3s; }
+        .info-item div a:hover { color: var(--pink-dark); }
+
+
+        /* Form Styling (New) */
+        .contact-form {
+            flex: 1;
+            min-width: 300px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+        .contact-form h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--pink-dark);
+            margin-bottom: 30px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--pink-main);
+            box-shadow: 0 0 0 3px rgba(242, 193, 198, 0.3);
+        }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .btn-submit {
+            background-color: var(--pink-dark);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(229, 168, 175, 0.4);
+        }
+        .btn-submit:hover {
+            background-color: #ce2a3c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(229, 168, 175, 0.6);
+        }
+
+        /* FOOTER */
+        footer {
+            background: #2a2a2a; /* Pak më e errët */
+            color: white;
+            text-align: center;
+            padding: 50px;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+        footer p { margin-bottom: 10px; }
+        footer .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--pink-main);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 992px) {
+            .hero h1 { font-size: 3.2rem; }
+            .section-title { font-size: 2.5rem; }
+            .about-us, .contact-content { flex-direction: column; }
+            .about-image, .about-content, .contact-info, .contact-form { min-width: unset; width: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            nav { display: none; } /* Hide nav on mobile, would need a hamburger menu */
+            .hero { padding-top: 80px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .btn-termin { padding: 12px 30px; font-size: 0.9rem; }
+            .section-title { font-size: 2rem; }
+            .section-subtitle { font-size: 1rem; }
+            .service-card h3 { font-size: 1.5rem; }
+            .about-content h3 { font-size: 1.8rem; }
+            .contact-info, .contact-form { padding: 30px; }
+            .info-item { font-size: 0.9rem; }
+            .info-item i { width: 40px; height: 40px; font-size: 18px; }
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#home" class="logo">
+            <i class="fas fa-tooth"></i> DENT HK
+        </a>
+        <nav>
+            <a href="#home">Ballina</a>
+            <a href="#services">Shërbimet</a>
+            <a href="#about">Rreth Nesh</a>
+            <a href="#contact">Kontakti</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <small class="fade-in">Klinika Dentare Profesionale</small>
+            <h1 class="fade-in">Buzëqeshja juaj e përsosur, <br>misioni ynë kryesor.</h1>
+            <p class="fade-in">Dr. Heroina Krasniqi Sopjani ofron kujdesin më modern dhe profesional për shëndetin dhe bukurinë e buzëqeshjes tuaj.</p>
+            <a href="#contact" class="btn-termin fade-in">REZERVO TERMININ TANI</a>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="container text-center">
+            <h2 class="section-title fade-in">Shërbimet Tona</h2>
+            <p class="section-subtitle fade-in">Ofertat më të plota dhe teknologjia më e avancuar për shëndetin oral.</p>
+            <div class="grid-services">
+                <div class="service-card fade-in">
+                    <i class="fas fa-star"></i>
+                    <h3>Estetikë Dentare</h3>
+                    <p>Zbardhje, faceta dhe kurora për një buzëqeshje të shkëlqyer.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <i class="fas fa-medkit"></i>
+                    <h3>Stomatologji e Përgjithshme</h3>
+                    <p>Kontrolle, mbushje, heqje dhëmbësh dhe kujdes i vazhdueshëm.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <i class="fas fa-syringe"></i>
+                    <h3>Implantologji</h3>
+                    <p>Zëvendësimi i dhëmbëve që mungojnë me implante dentare afatgjata.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <i class="fas fa-child"></i>
+                    <h3>Pedodontologji</h3>
+                    <p>Kujdesi special për dhëmbët e fëmijëve tuaj në një ambient miqësor.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <i class="fas fa-x-ray"></i>
+                    <h3>Radiologji Dentare</h3>
+                    <p>Diagnoza e saktë me pajisje moderne për rrezatim minimal.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <i class="fas fa-microscope"></i>
+                    <h3>Endodontologji</h3>
+                    <p>Trajtimi i kanalit të rrënjës me teknikat më inovative.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title text-center fade-in">Rreth Klinikës DENT HK</h2>
+            <p class="section-subtitle text-center fade-in">Përvoja dhe profesionalizmi i Dr. Heroina Krasniqi Sopjani në shërbim të shëndetit tuaj oral.</p>
+            <div class="about-us">
+                <div class="about-image fade-in">
+                    <img src="https://images.unsplash.com/photo-1629909614138-b78b87da6a98?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dr. Heroina Krasniqi Sopjani">
+                </div>
+                <div class="about-content fade-in">
+                    <h3>Përse DENT HK?</h3>
+                    <p>Klinika Dentare DENT HK është themeluar me vizionin për të ofruar shërbime dentare të klasit të parë, të kombinuara me një kujdes të veçantë ndaj pacientit.</p>
+                    <p>Dr. Heroina Krasniqi Sopjani dhe ekipi i saj janë të përkushtuar ndaj përsosmërisë, duke përdorur teknologjinë më të fundit dhe trajtimet inovative për të siguruar rezultate të mahnitshme dhe buzëqeshje të shëndetshme.</p>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Ekip me Përvojë dhe i Certifikuar</li>
+                        <li><i class="fas fa-check-circle"></i> Teknologji Moderne</li>
+                        <li><i class="fas fa-check-circle"></i> Higjienë Maksimale</li>
+                        <li><i class="fas fa-check-circle"></i> Çmime Konkurruese</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="container text-center">
+            <h2 class="section-title fade-in">Na Kontaktoni</h2>
+            <p class="section-subtitle fade-in">Jemi gjithmonë në dispozicion për t'iu përgjigjur pyetjeve tuaja dhe për të caktuar terminin e ardhshëm.</p>
+            <div class="contact-content">
+                <div class="contact-info fade-in">
+                    <div class="info-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telefoni</strong>
+                            <a href="tel:+38349135500">+383 (0) 49 13 55 00</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>Email</strong>
+                            <a href="mailto:dent-hk@outlook.com">dent-hk@outlook.com</a>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-location-dot"></i>
+                        <div>
+                            <strong>Adresa</strong>
+                            Rr. Nënë Tereza, Nr. 119
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fab fa-instagram"></i>
+                        <div>
+                            <strong>Instagram</strong>
+                            <a href="https://www.instagram.com/denthk_dentalclinic/" target="_blank">@denthk_dentalclinic</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form fade-in">
+                    <h3>Lini një mesazh ose caktoni termin</h3>
+                    <form action="submit_form.php" method="POST"> <div class="form-group">
+                            <label for="name">Emri dhe Mbiemri</label>
+                            <input type="text" id="name" name="name" required placeholder="P.sh. Ana Marku">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="P.sh. ana.marku@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Telefoni (Opsionale)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+383 4X XXX XXX">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mesazhi / Koha e preferuar</label>
+                            <textarea id="message" name="message" required placeholder="Shkruani mesazhin ose terminin e preferuar..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Dërgo Mesazhin</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <a href="#home" class="footer-logo">DENT HK</a>
+        <p>&copy; 2026 DENT HK - DENTAL CLINIC. Të gjitha të drejtat e rezervuara.</p>
+        <p style="font-size: 0.8rem; opacity: 0.7;">Dr. Heroina Krasniqi Sopjani</p>
+    </footer>
+
+    <script>
+        // JavaScript for fade-in animations on scroll
+        document.addEventListener("DOMContentLoaded", () => {
+            const faders = document.querySelectorAll(".fade-in");
+
+            const appearOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px" // Start appearing 50px before entering viewport
+            };
+
+            const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add("appear");
+                        appearOnScroll.unobserve(entry.target);
+                    }
+                });
+            }, appearOptions);
+
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        });
+    </script>
+
+</body>
+</html>
