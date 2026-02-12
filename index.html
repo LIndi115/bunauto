@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTO BUNA PRO - Sistemi i Faturave</title>
+    <style>
+        /* NGJYRAT DHE FONTI */
+        :root {
+            --accent: #ff6a00; /* Portokallia e logos */
+            --dark: #1a1a1b;
+            --bg-gray: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--dark);
+            color: white;
+            height: 100vh;
+        }
+
+        /* PANELI MAJTAS (KONTROLLI) */
+        .sidebar {
+            width: 400px;
+            background-color: #212121;
+            padding: 25px;
+            box-sizing: border-box;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            color: var(--accent);
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #555;
+            color: white;
+            padding: 8px 0;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus { border-bottom-color: var(--accent); }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-add { background: var(--accent); color: white; }
+        .btn-print { background: #444; color: white; margin-top: 20px; }
+        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        /* PREVIEW E FATURËS (DJATHAS) */
+        .preview-area {
+            flex-grow: 1;
+            background-color: var(--bg-gray);
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .invoice-card {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* STILI I FOTOS: SHIRITI PORTOKALLI */
+        .orange-bar {
+            height: 15px;
+            background-color: var(--accent);
+            width: 100%;
+        }
+
+        .invoice-content {
+            padding: 50px 70px;
+        }
+
+        /* HEADER SI NE FOTO */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 65px;
+            fill: var(--dark);
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            font-size: 35px;
+            font-weight: 900;
+            color: var(--dark);
+            line-height: 0.9;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .meta-info {
+            text-align: right;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .meta-info b { color: #000; }
+
+        /* DETAJET E KLIENTIT */
+        .client-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .info-col h4 {
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+        }
+
+        .info-col p { margin: 3px 0; font-size: 14px; }
+
+        /* TABELA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid var(--dark);
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        /* TOTALI */
+        .total-wrapper {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .total-box {
+            background-color: var(--bg-gray);
+            padding: 20px 40px;
+            text-align: right;
+            border-right: 5px solid var(--accent);
+        }
+
+        .total-label { font-size: 14px; color: #666; font-weight: bold; }
+        .total-amount { font-size: 32px; font-weight: 900; color: var(--dark); }
+
+        /* FOOTER SIGNATURES */
+        .signatures {
+            margin-top: auto;
+            padding-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sig-box {
+            width: 220px;
+            text-align: center;
+            border-top: 1px solid #999;
+            padding-top: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* PRINT SETTINGS */
+        @media print {
+            .sidebar { display: none; }
+            .preview-area { padding: 0; background: white; }
+            .invoice-card { box-shadow: none; width: 100%; border: none; }
+            .delete-btn { display: none; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>AUTO BUNA</h2>
+        
+        <div class="input-group">
+            <label>Numri i Faturës</label>
+            <input type="text" id="in-no" value="001">
+        </div>
+
+        <div class="input-group">
+            <label>Data</label>
+            <input type="date" id="in-date">
+        </div>
+
+        <div class="input-group">
+            <label>Emri i Klientit</label>
+            <input type="text" id="in-client" placeholder="Psh: Herolind Smajli">
+        </div>
+
+        <div class="input-group">
+            <label>Vetura & Targat</label>
+            <input type="text" id="in-car" placeholder="Psh: Golf 7 / 01-123-AB">
+        </div>
+
+        <div class="input-group" style="background: #3d3d3d;">
+            <label>Shërbimi (Përshkrimi)</label>
+            <input type="text" id="in-desc" placeholder="Çfarë është punuar?">
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="number" id="in-qty" value="1">
+                <input type="number" id="in-price" placeholder="Çmimi €">
+            </div>
+        </div>
+
+        <button class="btn btn-add" onclick="addRow()">SHTO NË FATURË +</button>
+        <button class="btn btn-print" onclick="window.print()">PRINTO FATURËN 🖨️</button>
+    </div>
+
+    <div class="preview-area">
+        <div class="invoice-card">
+            <div class="orange-bar"></div>
+            
+            <div class="invoice-content">
+                <div class="header-top">
+                    <div class="logo-box">
+                        <svg class="logo-icon" viewBox="0 0 512 512"><path d="M499.99 176h-59.87l-16.64-41.6C406.38 91.63 365.57 64 319.5 64h-127c-46.06 0-86.88 27.63-103.99 70.4L71.87 176H12.01C5.38 176 0 181.38 0 188v32c0 6.62 5.38 12 12 12h8.62l13.11 118.01c2.05 18.45 17.65 31.99 36.25 31.99H81.8c15.91 0 29.47-11.39 32.44-27.02l4.81-24.98h273.91l4.81 24.98c2.97 15.63 16.52 27.02 32.44 27.02h11.82c18.6 0 34.2-13.54 36.25-31.99L503.38 232h8.62c6.62 0 12-5.38 12-12v-32c0-6.62-5.38-12-12.01-12zM192.5 96h127c29.19 0 55.02 17.49 65.86 44.58L400.1 176h-288.2l14.74-35.42C137.48 113.49 163.31 96 192.5 96zM96 288c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm320 0c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"/></svg>
+                        <div class="logo-text">
+                            <h1>AUTO<span>BUNA</span></h1>
+                            <small style="letter-spacing: 3px; font-weight: bold; color: #666;">PROFESSIONAL SERVICE</small>
+                        </div>
+                    </div>
+                    <div class="meta-info">
+                        <b>FATURA:</b> #<span id="out-no">001</span><br>
+                        <b>DATA:</b> <span id="out-date">12/02/2026</span>
+                    </div>
+                </div>
+
+                <div class="client-section">
+                    <div class="info-col">
+                        <h4>SHËRBIMET NGA:</h4>
+                        <p><strong>AUTO BUNA</strong></p>
+                        <p>Riparim Dritash & DRL (LED/XENON)</p>
+                        <p>Shitje dhe Riparim Fara & Trafo</p>
+                        <p><b>Tel: 049 160 886 / 044 532 990</b></p>
+                    </div>
+                    <div class="info-col" style="text-align: right;">
+                        <h4>PËR KLIENTIN:</h4>
+                        <p><strong id="out-client" style="font-size: 16px;">---</strong></p>
+                        <p id="out-car" style="color: #666; margin-top: 10px;">---</p>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Përshkrimi i Shërbimit</th>
+                            <th>Sasia</th>
+                            <th>Çmimi</th>
+                            <th style="text-align: right;">Gjithsej</th>
+                            <th class="delete-btn"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                </table>
+
+                <div class="total-wrapper">
+                    <div class="total-box">
+                        <div class="total-label">TOTALI PËR PAGESË</div>
+                        <div class="total-amount" id="out-total">0.00€</div>
+                    </div>
+                </div>
+
+                <div class="signatures">
+                    <div class="sig-box">NËNSHKRIMI I PRONARIT</div>
+                    <div class="sig-box">NËNSHKRIMI I KLIENTIT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update live
+        document.getElementById('in-no').addEventListener('input', e => document.getElementById('out-no').innerText = e.target.value);
+        document.getElementById('in-client').addEventListener('input', e => document.getElementById('out-client').innerText = e.target.value.toUpperCase());
+        document.getElementById('in-car').addEventListener('input', e => document.getElementById('out-car').innerText = e.target.value.toUpperCase());
+        
+        // Data Setup
+        const dInput = document.getElementById('in-date');
+        dInput.valueAsDate = new Date();
+        document.getElementById('out-date').innerText = new Date().toLocaleDateString('sq-AL');
+        dInput.addEventListener('change', () => {
+            const parts = dInput.value.split('-');
+            document.getElementById('out-date').innerText = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        });
+
+        let totalSum = 0;
+
+        function addRow() {
+            const desc = document.getElementById('in-desc').value;
+            const qty = parseFloat(document.getElementById('in-qty').value);
+            const price = parseFloat(document.getElementById('in-price').value);
+
+            if(!desc || !price) return alert("Ju lutem shkruani pershkrimin dhe cmimin!");
+
+            const rowTotal = qty * price;
+            totalSum += rowTotal;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 600;">${desc.toUpperCase()}</td>
+                <td>${qty}</td>
+                <td>${price.toFixed(2)}€</td>
+                <td style="text-align: right; font-weight: bold;">${rowTotal.toFixed(2)}€</td>
+                <td class="delete-btn"><button onclick="removeRow(this, ${rowTotal})" style="color:red; background:none; border:none; cursor:pointer;">✕</button></td>
+            `;
+
+            document.getElementById('table-body').appendChild(tr);
+            document.getElementById('out-total').innerText = totalSum.toFixed(2) + '€';
+
+            // Reset
+            document.getElementById('in-desc').value = '';
+            document.getElementById('in-price').value = '';
+        }
+
+        function removeRow(btn, amt) {
+            btn.parentElement.parentElement.remove();
+            totalSum -= amt;
+            document.getElementById('out-total').innerText = Math.abs(totalSum).toFixed(2) + '€';
+        }
+    </script>
+</body>
+</html>
