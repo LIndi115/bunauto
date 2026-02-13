@@ -31,6 +31,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
 
         .sidebar h2 {
@@ -108,18 +109,17 @@
             flex-direction: column;
         }
 
-        /* STILI I FOTOS: SHIRITI PORTOKALLI */
         .orange-bar {
             height: 15px;
-            background-color: var(--accent);
+            background-color: var(--accent) !important;
             width: 100%;
+            -webkit-print-color-adjust: exact;
         }
 
         .invoice-content {
             padding: 50px 70px;
         }
 
-        /* HEADER SI NE FOTO */
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -146,9 +146,7 @@
             line-height: 0.9;
         }
 
-        .logo-text span {
-            color: var(--accent);
-        }
+        .logo-text span { color: var(--accent); }
 
         .meta-info {
             text-align: right;
@@ -158,7 +156,6 @@
 
         .meta-info b { color: #000; }
 
-        /* DETAJET E KLIENTIT */
         .client-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -176,7 +173,6 @@
 
         .info-col p { margin: 3px 0; font-size: 14px; }
 
-        /* TABELA */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -198,7 +194,6 @@
             font-size: 14px;
         }
 
-        /* TOTALI */
         .total-wrapper {
             margin-top: 30px;
             display: flex;
@@ -206,16 +201,16 @@
         }
 
         .total-box {
-            background-color: var(--bg-gray);
+            background-color: var(--bg-gray) !important;
             padding: 20px 40px;
             text-align: right;
             border-right: 5px solid var(--accent);
+            -webkit-print-color-adjust: exact;
         }
 
         .total-label { font-size: 14px; color: #666; font-weight: bold; }
         .total-amount { font-size: 32px; font-weight: 900; color: var(--dark); }
 
-        /* FOOTER SIGNATURES */
         .signatures {
             margin-top: auto;
             padding-top: 60px;
@@ -233,13 +228,39 @@
             color: #555;
         }
 
-        /* PRINT SETTINGS */
+        /* RREGULLAT E PRINTIMIT */
         @media print {
-            .sidebar { display: none; }
-            .preview-area { padding: 0; background: white; }
-            .invoice-card { box-shadow: none; width: 100%; border: none; }
-            .delete-btn { display: none; }
-            body { background: white; }
+            @page { 
+                margin: 0; 
+                size: auto;
+            }
+            body { 
+                background: white; 
+            }
+            .sidebar { 
+                display: none !important; 
+            }
+            .preview-area { 
+                padding: 0; 
+                margin: 0;
+                background: white;
+                overflow: visible !important;
+                display: block !important;
+            }
+            .invoice-card { 
+                box-shadow: none; 
+                width: 100%; 
+                border: none; 
+                margin: 0;
+                min-height: auto;
+            }
+            .delete-btn { 
+                display: none !important; 
+            }
+            /* Heq vijat e scroll-it anash gjate printimit */
+            ::-webkit-scrollbar {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -272,7 +293,7 @@
             <label>Shërbimi (Përshkrimi)</label>
             <input type="text" id="in-desc" placeholder="Çfarë është punuar?">
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="number" id="in-qty" value="1">
+                <input type="number" id="in-qty" value="1" placeholder="Sasia">
                 <input type="number" id="in-price" placeholder="Çmimi €">
             </div>
         </div>
@@ -296,7 +317,7 @@
                     </div>
                     <div class="meta-info">
                         <b>FATURA:</b> #<span id="out-no">001</span><br>
-                        <b>DATA:</b> <span id="out-date">12/02/2026</span>
+                        <b>DATA:</b> <span id="out-date"></span>
                     </div>
                 </div>
 
@@ -326,7 +347,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        </tbody>
+                    </tbody>
                 </table>
 
                 <div class="total-wrapper">
@@ -352,22 +373,28 @@
         
         // Data Setup
         const dInput = document.getElementById('in-date');
-        dInput.valueAsDate = new Date();
-        document.getElementById('out-date').innerText = new Date().toLocaleDateString('sq-AL');
+        const today = new Date();
+        dInput.valueAsDate = today;
+        document.getElementById('out-date').innerText = today.toLocaleDateString('sq-AL');
+
         dInput.addEventListener('change', () => {
-            const parts = dInput.value.split('-');
-            document.getElementById('out-date').innerText = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            if(dInput.value) {
+                const parts = dInput.value.split('-');
+                document.getElementById('out-date').innerText = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
         });
 
         let totalSum = 0;
 
         function addRow() {
             const desc = document.getElementById('in-desc').value;
-            const qty = parseFloat(document.getElementById('in-qty').value);
-            const price = parseFloat(document.getElementById('in-price').value);
+            const qtyInput = document.getElementById('in-qty').value;
+            const priceInput = document.getElementById('in-price').value;
 
-            if(!desc || !price) return alert("Ju lutem shkruani pershkrimin dhe cmimin!");
+            if(!desc || !priceInput) return alert("Ju lutem shkruani pershkrimin dhe cmimin!");
 
+            const qty = parseFloat(qtyInput) || 1;
+            const price = parseFloat(priceInput);
             const rowTotal = qty * price;
             totalSum += rowTotal;
 
@@ -377,15 +404,16 @@
                 <td>${qty}</td>
                 <td>${price.toFixed(2)}€</td>
                 <td style="text-align: right; font-weight: bold;">${rowTotal.toFixed(2)}€</td>
-                <td class="delete-btn"><button onclick="removeRow(this, ${rowTotal})" style="color:red; background:none; border:none; cursor:pointer;">✕</button></td>
+                <td class="delete-btn"><button onclick="removeRow(this, ${rowTotal})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">✕</button></td>
             `;
 
             document.getElementById('table-body').appendChild(tr);
             document.getElementById('out-total').innerText = totalSum.toFixed(2) + '€';
 
-            // Reset
+            // Reset fushate pas shtimit
             document.getElementById('in-desc').value = '';
             document.getElementById('in-price').value = '';
+            document.getElementById('in-qty').value = '1';
         }
 
         function removeRow(btn, amt) {
