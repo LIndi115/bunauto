@@ -59,7 +59,7 @@
             font-weight: bold;
         }
 
-        input {
+        input, select {
             width: 100%;
             background: transparent;
             border: none;
@@ -69,6 +69,8 @@
             outline: none;
             font-size: 14px;
         }
+
+        select option { background: #212121; }
 
         input:focus { border-bottom-color: var(--accent); }
 
@@ -197,7 +199,17 @@
         .total-wrapper {
             margin-top: 30px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .warranty-box {
+            font-size: 14px;
+            color: #444;
+            padding: 10px;
+            border-left: 3px solid var(--accent);
+            background: #fff9f5;
+            max-width: 300px;
         }
 
         .total-box {
@@ -228,39 +240,14 @@
             color: #555;
         }
 
-        /* RREGULLAT E PRINTIMIT */
         @media print {
-            @page { 
-                margin: 0; 
-                size: auto;
-            }
-            body { 
-                background: white; 
-            }
-            .sidebar { 
-                display: none !important; 
-            }
-            .preview-area { 
-                padding: 0; 
-                margin: 0;
-                background: white;
-                overflow: visible !important;
-                display: block !important;
-            }
-            .invoice-card { 
-                box-shadow: none; 
-                width: 100%; 
-                border: none; 
-                margin: 0;
-                min-height: auto;
-            }
-            .delete-btn { 
-                display: none !important; 
-            }
-            /* Heq vijat e scroll-it anash gjate printimit */
-            ::-webkit-scrollbar {
-                display: none;
-            }
+            @page { margin: 0; size: auto; }
+            body { background: white; }
+            .sidebar { display: none !important; }
+            .preview-area { padding: 0; margin: 0; background: white; overflow: visible !important; display: block !important; }
+            .invoice-card { box-shadow: none; width: 100%; border: none; margin: 0; min-height: auto; }
+            .delete-btn { display: none !important; }
+            ::-webkit-scrollbar { display: none; }
         }
     </style>
 </head>
@@ -287,6 +274,18 @@
         <div class="input-group">
             <label>Vetura & Targat</label>
             <input type="text" id="in-car" placeholder="Psh: Golf 7 / 01-123-AB">
+        </div>
+
+        <div class="input-group">
+            <label>Garancioni</label>
+            <select id="in-warranty">
+                <option value="">Pa garancion</option>
+                <option value="6 Muaj">6 Muaj</option>
+                <option value="1 Vit">1 Vit</option>
+                <option value="2 Vite">2 Vite</option>
+                <option value="custom">Tjetër (shkruaj...)</option>
+            </select>
+            <input type="text" id="in-warranty-custom" placeholder="Psh: 3 muaj" style="display:none; margin-top:10px;">
         </div>
 
         <div class="input-group" style="background: #3d3d3d;">
@@ -351,6 +350,9 @@
                 </table>
 
                 <div class="total-wrapper">
+                    <div id="warranty-display" class="warranty-box" style="display:none;">
+                        <b>GARANCIONI:</b> <span id="out-warranty">---</span>
+                    </div>
                     <div class="total-box">
                         <div class="total-label">TOTALI PËR PAGESË</div>
                         <div class="total-amount" id="out-total">0.00€</div>
@@ -366,12 +368,38 @@
     </div>
 
     <script>
-        // Update live
+        // Update live fields
         document.getElementById('in-no').addEventListener('input', e => document.getElementById('out-no').innerText = e.target.value);
         document.getElementById('in-client').addEventListener('input', e => document.getElementById('out-client').innerText = e.target.value.toUpperCase());
         document.getElementById('in-car').addEventListener('input', e => document.getElementById('out-car').innerText = e.target.value.toUpperCase());
         
-        // Data Setup
+        // Warranty logic
+        const wSelect = document.getElementById('in-warranty');
+        const wCustom = document.getElementById('in-warranty-custom');
+        const wDisplay = document.getElementById('warranty-display');
+        const wOut = document.getElementById('out-warranty');
+
+        function updateWarranty() {
+            let val = wSelect.value;
+            if(val === "custom") {
+                wCustom.style.display = "block";
+                val = wCustom.value;
+            } else {
+                wCustom.style.display = "none";
+            }
+
+            if(val) {
+                wDisplay.style.display = "block";
+                wOut.innerText = val.toUpperCase();
+            } else {
+                wDisplay.style.display = "none";
+            }
+        }
+
+        wSelect.addEventListener('change', updateWarranty);
+        wCustom.addEventListener('input', updateWarranty);
+
+        // Date Setup
         const dInput = document.getElementById('in-date');
         const today = new Date();
         dInput.valueAsDate = today;
@@ -410,7 +438,6 @@
             document.getElementById('table-body').appendChild(tr);
             document.getElementById('out-total').innerText = totalSum.toFixed(2) + '€';
 
-            // Reset fushate pas shtimit
             document.getElementById('in-desc').value = '';
             document.getElementById('in-price').value = '';
             document.getElementById('in-qty').value = '1';
